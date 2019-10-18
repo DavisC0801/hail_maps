@@ -1,0 +1,19 @@
+{% load leaflet_tags %}
+
+<head>
+    {% leaflet_js %}
+    {% leaflet_css %}
+</head>
+
+<body>
+  {% leaflet_map "Client Map" %}
+  {% if client_list%}
+    <ul>
+    {% for client in client_list %}
+      <li>{{client.name}}</li>
+    {% endfor %}
+    </ul>
+  {% else %}
+    <p>No clients in database</p>
+  {% endif %}
+</body>
