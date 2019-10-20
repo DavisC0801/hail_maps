@@ -1,4 +1,6 @@
 {% load leaflet_tags %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'maps/style.css' %}">
 
 <head>
     {% leaflet_js %}
@@ -6,7 +8,7 @@
 </head>
 
 <body>
-  {% leaflet_map "Client Map" %}
+  {% leaflet_map "client_map" %}
   {% if client_list%}
     <ul>
     {% for client in client_list %}
@@ -16,4 +18,21 @@
   {% else %}
     <p>No clients in database</p>
   {% endif %}
+  <script type="text/javascript">
+    window.addEventListener("map:init", function (event) {
+      var clientMap = event.detail.map;
+      var newMarker = map_add_marker(clientMap, [40.012510, -105.296811])
+      var content = `<p> John Mcgarity - 303-443-9810 </p>`;
+      newMarker.bindPopup(content);
+      newMarker.on('click', onClick);
+    }, false);
+
+    function onClick(event) {
+       var popup = event.target.getPopup();
+    }
+
+    function map_add_marker (map, coord) {
+      return L.marker(coord).addTo(map);
+    }
+  </script>
 </body>
