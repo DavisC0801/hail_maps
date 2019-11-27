@@ -8,31 +8,39 @@
 </head>
 
 <body>
-  {% leaflet_map "client_map" %}
-  {% if client_list%}
-    <ul>
-    {% for client in client_list %}
-      <li>{{client.name}}</li>
-    {% endfor %}
-    </ul>
-  {% else %}
-    <p>No clients in database</p>
-  {% endif %}
   <script type="text/javascript">
-    window.addEventListener("map:init", function (event) {
-      var clientMap = event.detail.map;
-      var newMarker = map_add_marker(clientMap, [40.012510, -105.296811])
-      var content = `<p> John Mcgarity - 303-443-9810 </p>`;
-      newMarker.bindPopup(content);
-      newMarker.on('click', onClick);
-    }, false);
+    function plot_marker(client_data){
+      window.addEventListener("map:init", function (event) {
+        var clientMap = event.detail.map;
+        var newMarker = map_add_marker(clientMap, [client_data.longitude, client_data.latitude])
+        var content = `<p>${client_data.name} ${client_data.phone_number}</p>`;
+        newMarker.bindPopup(content);
+        newMarker.on('click', onClick);
+      }, false);
+    }
 
     function onClick(event) {
        var popup = event.target.getPopup();
     }
 
-    function map_add_marker (map, coord) {
+    function map_add_marker(map, coord) {
       return L.marker(coord).addTo(map);
     }
   </script>
+
+  {% leaflet_map "client_map" %}
+  {% if address_list %}
+    {% for address in address_list %}
+    <script>plot_marker(
+      {
+        name: "{{ address.client.name }}",
+        phone_number: "{{ address.client.phone_number }}",
+        longitude: "{{ address.longitude }}",
+        latitude: "{{ address.latitude }}"
+      }
+    )</script>
+    {% endfor %}
+  {% else %}
+    <p>No clients in database</p>
+  {% endif %}
 </body>
